@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="col-12 col-md-8 col-lg-6">
+    <!-- Card with custom background color -->
+    <div class="card border-0 shadow-sm" style="max-width: 400px; margin: 0 auto; background-color: #f5e9dc;">
+      <!-- Centered card body -->
+      <div class="card-body p-4 d-flex flex-column align-items-center">
+        <h2 class="text-center mb-3 fw-bold" style="color: #5a4a42;">Welcome Back!</h2>
+
+        {% if form.errors %}
+        <div class="alert alert-danger text-center mb-3 py-2 w-100">
+          Invalid username or password
+        </div>
+        {% endif %}
+
+        <!-- Centered form with max-width -->
+        <form method="POST" action="{% url 'login' %}" class="w-100" style="max-width: 320px;">
+          {% csrf_token %}
+          
+          <div class="mb-3 w-100">
+            <label for="id_username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="id_username" required>
+          </div>
+          
+          <div class="mb-3 w-100">
+            <label for="id_password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="id_password" required>
+          </div>
+          
+          <!-- Login button with hover effect -->
+          <div class="d-grid mb-3 w-100">
+            <button type="submit" class="btn py-2" 
+                    style="background-color: burlywood; color: white;"
+                    onmouseover="this.style.backgroundColor='#d2a679'" 
+                    onmouseout="this.style.backgroundColor='burlywood'">
+              Login
+            </button>
+          </div>
+          
+          <div class="text-center mb-3 w-100">
+            <a href="{% url 'password_reset' %}" 
+               style="color: #8b7355;"
+               onmouseover="this.style.color='#6b5a45'; this.style.textDecoration='underline'"
+               onmouseout="this.style.color='#8b7355'; this.style.textDecoration='none'">
+              Forgot Password?
+            </a>
+          </div>
+          
+          <!-- Divider -->
+          <div class="d-flex align-items-center my-3 w-100">
+            <hr class="flex-grow-1" style="border-color: #d2b48c;">
+            <span class="px-2" style="color: #a08c7a;">or</span>
+            <hr class="flex-grow-1" style="border-color: #d2b48c;">
+          </div>
+          
+          <!-- Sign up link -->
+          <div class="text-center w-100">
+            <p class="mb-0">Don't have an account? 
+              <a href="{% url 'register' %}" 
+                 style="color: burlywood;"
+                 onmouseover="this.style.color='#d2a679'; this.style.textDecoration='underline'"
+                 onmouseout="this.style.color='burlywood'; this.style.textDecoration='none'">
+                Sign Up
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

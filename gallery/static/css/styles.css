@@ -1,0 +1,37 @@
+/* Custom colors */
+:root {
+  --burlywood: #DEB887;
+  --burlywood-dark: #D2A679;
+  --brown: #5A4A42;
+  --brown-light: #8B7355;
+}
+
+.text-brown { color: var(--brown); }
+.text-brown-light { color: var(--brown-light); }
+.text-burlywood { color: var(--burlywood); }
+
+.bg-burlywood { background-color: var(--burlywood); }
+.btn-burlywood { 
+  background-color: var(--burlywood);
+  border-color: var(--burlywood);
+}
+.btn-burlywood:hover {
+  background-color: var(--burlywood-dark);
+  border-color: var(--burlywood-dark);
+}
+
+.border-brown { border-color: var(--burlywood) !important; }
+
+/* Custom utilities */
+.min-vh-80 { min-height: 80vh; }
+
+/* Hover effects */
+.text-brown-light:hover { color: var(--brown) !important; }
+.text-burlywood:hover { color: var(--burlywood-dark) !important; }
+
+/* Transitions */
+.btn-burlywood, 
+.text-brown-light, 
+.text-burlywood {
+  transition: all 0.2s ease;
+}

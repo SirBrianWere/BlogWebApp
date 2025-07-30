@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+  <div class="card border-0 shadow-sm" style="width: 95%; max-width: 650px; background-color: #f5e9dc;">
+    <div class="card-body p-4">
+      <div class="row gx-4">  <!-- Added horizontal gap between columns -->
+        <!-- Left Column - Form -->
+        <div class="col-md-6">
+          <h4 class="text-center mb-4 fw-bold" style="color: #5a4a42;">Register</h4>
+          
+          <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label class="form-label fw-medium">Username</label>
+              {{ form.username }}
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-medium">Email</label>
+              {{ form.email }}
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label fw-medium">Password</label>
+              {{ form.password1 }}
+            </div>
+            
+            <div class="mb-4">
+              <label class="form-label fw-medium">Confirm Password</label>
+              {{ form.password2 }}
+            </div>
+            
+            <button type="submit" class="btn w-100 py-2 fw-medium" style="background-color: burlywood; color: white;">
+              Register
+            </button>
+          </form>
+        </div>
+        
+        <!-- Vertical Divider -->
+        <div class="col-auto px-0 d-none d-md-flex justify-content-center">
+          <div style="width: 1px; height: 100%; background-color: rgba(210,180,140,0.5); margin: 0 1.5rem;"></div>
+        </div>
+        
+        <!-- Right Column - Password Help -->
+        <div class="col-md-5 d-flex align-items-center">
+          <div>
+            <h5 class="fw-medium mb-3" style="color: #5a4a42;">Password Requirements:</h5>
+            <ul class="ps-3" style="font-size: 0.95rem; color: #5a4a42; line-height: 1.6;">
+              <li class="mb-2">Can't be too similar to personal info</li>
+              <li class="mb-2">Must contain at least 8 characters</li>
+              <li class="mb-2">Can't be a common password</li>
+              <li class="mb-3">Can't be entirely numeric</li>
+            </ul>
+            <div class="text-center pt-2">
+              <span class="d-inline-block me-1">Have an account?</span>
+              <a href="{% url 'login' %}" class="fw-medium" style="color: burlywood;">Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #id_username, #id_email, #id_password1, #id_password2 {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border: 1px solid #d2b48c;
+    border-radius: 6px;
+    width: 100%;
+    background: white;
+  }
+  .form-label { font-size: 0.95rem; }
+</style>
+{% endblock %}

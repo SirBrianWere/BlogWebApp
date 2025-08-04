@@ -91,7 +91,7 @@ def edit_product(request, pk):
         return HttpResponseForbidden("You don't have permission to edit this post")
     
     if request.method == 'POST':
-        form = ProductForm(request.POST, instance=product)
+        form = ProductForm(request.POST, request.FILES ,instance=product)
         if form.is_valid():
             form.save()
             return redirect('product_list')

@@ -46,8 +46,8 @@ def product_list(request):
 
 #Product Details inclusive of comments and likes #READ
 @login_required
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def product_detail(request, slug):
+    product = get_object_or_404(Product, slug=slug)
     comments = product.comments.all().order_by('-date_posted')
 
     if request.method == 'POST':
@@ -57,7 +57,7 @@ def product_detail(request, pk):
             comment.product = product
             comment.user = request.user
             comment.save()
-            return redirect('product_detail', pk=product.pk)
+            return redirect('product_detail', slug=product.slug)
     else:
         form = CommentForm()
 
@@ -83,8 +83,8 @@ def create_product(request):
 
 #Editing Created Products/Posts #EDIT
 @login_required
-def edit_product(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def edit_product(request, slug):
+    product = get_object_or_404(Product, slug=slug)
 
     # Check if current user is the author
     if product.author != request.user:
@@ -101,8 +101,8 @@ def edit_product(request, pk):
 
 #Deleteing an existing Product/Post #DELETE
 @login_required
-def delete_product(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def delete_product(request, slug):
+    product = get_object_or_404(Product, slug=slug)
 
     #Check if current user is the author
     if product.author != request.user:
@@ -119,13 +119,13 @@ def home(request):
     return render (request, 'gallery/index1.html',{'product': products})
 
 @login_required
-def like_post(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def like_post(request, slug):
+    product = get_object_or_404(Product, slug=slug)
     if request.user.is_authenticated:
         if product.likes.filter(id=request.user.id).exists():
             product.likes.remove(request.user)
         else:
             product.likes.add(request.user)
-    return redirect(reverse('product_detail', args=[str(pk)])) #Where to redirect after like
+    return redirect(reverse('product_detail', args=[str(product.slug)])) #Where to redirect after like
 
     

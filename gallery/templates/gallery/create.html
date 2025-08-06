@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your existing styles remain the same */
         .creation-card {
             border-radius: 12px;
             border: none;
@@ -59,12 +61,24 @@
             border-color: #6a8fd8;
             box-shadow: 0 0 0 0.25rem rgba(106, 143, 216, 0.25);
         }
+        /* Add error message styling */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
+
+                <a href="{% url 'product_list' %}" class="btn mb-4 d-inline-flex align-items-center" 
+                    style="background-color: burlywood; color: white; border-radius: 8px; padding: 8px 16px;">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Blogs
+                </a>
+
                 <div class="card creation-card">
                     <div class="creation-header text-center">
                         <h2 class="h3 mb-0"><i class="fas fa-plus-circle me-2"></i>Create New Blog Post</h2>
@@ -72,30 +86,60 @@
                     <div class="creation-body">
                         <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                             {% csrf_token %}
+
+                            
+                            
+                            <!-- Error messages display -->
+                            {% if form.errors %}
+                                <div class="alert alert-danger mb-4">
+                                    <strong>Error!</strong> Please correct the following:
+                                    <ul class="mb-0">
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                             
                             <div class="mb-4">
-                                <label for="postTitle" class="form-label">Post Title</label>
-                                <input type="text" class="form-control form-control-lg" id="postTitle" name="title" required placeholder="Enter a catchy title">
-                                <div class="invalid-feedback">Please provide a title for your post.</div>
+                                <label for="id_name" class="form-label">Post Title</label>
+                                <input type="text" class="form-control form-control-lg" id="id_name" name="name" 
+                                       value="{{ form.name.value|default:'' }}" required placeholder="Enter a catchy title">
+                                {% if form.name.errors %}
+                                    <div class="error-message">{{ form.name.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             
                             <div class="mb-4">
-                                <label for="postDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="postDescription" name="description" rows="5" required placeholder="Write your post content here..."></textarea>
-                                <div class="invalid-feedback">Please write your post content.</div>
+                                <label for="id_description" class="form-label">Description</label>
+                                <textarea class="form-control" id="id_description" name="description" rows="5" required 
+                                          placeholder="Write your post content here...">{{ form.description.value|default:'' }}</textarea>
+                                {% if form.description.errors %}
+                                    <div class="error-message">{{ form.description.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             
                             <div class="mb-4">
                                 <label class="form-label d-block">Featured Image</label>
-                                <label for="postImage" class="upload-area text-center">
+                                <label for="id_image" class="upload-area text-center">
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                     </div>
-                                    <h5 class="mb-2">Click to upload or drag and drop</h5>
+                                    <h5 class="mb-2">
+                                        {% if form.image.value %}
+                                            {{ form.image.value.name }}
+                                        {% else %}
+                                            Click to upload or drag and drop
+                                        {% endif %}
+                                    </h5>
                                     <p class="text-muted mb-0">PNG, JPG, GIF (Max 5MB)</p>
-                                    <input type="file" class="d-none" id="postImage" name="image" accept="image/*" required>
+                                    <input type="file" class="d-none" id="id_image" name="image" accept="image/*" required>
                                 </label>
-                                <div class="invalid-feedback d-block">Please select an image for your post.</div>
+                                {% if form.image.errors %}
+                                    <div class="error-message">{{ form.image.errors.0 }}</div>
+                                {% endif %}
                             </div>
                             
                             <div class="d-flex justify-content-between mt-4">
@@ -116,13 +160,26 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Enhanced file upload interaction
-        const fileInput = document.getElementById('postImage');
+        const fileInput = document.getElementById('id_image');
         const uploadArea = document.querySelector('.upload-area');
         const uploadText = uploadArea.querySelector('h5');
         
         fileInput.addEventListener('change', function(e) {
             if (this.files.length) {
-                uploadText.textContent = this.files[0].name;
+                const file = this.files[0];
+                // Basic file type validation
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file (PNG, JPG, GIF)');
+                    this.value = '';
+                    return;
+                }
+                // Basic file size validation (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+                uploadText.textContent = file.name;
                 uploadArea.style.borderColor = '#4a6fa5';
                 uploadArea.style.backgroundColor = '#e6f0ff';
             }

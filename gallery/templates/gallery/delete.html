@@ -19,7 +19,7 @@
                             <i class="fas fa-trash-alt me-2"></i>Yes, Delete
                         </button>
                     </form>
-                    <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="btn btn-secondary">
+                    <a href="{% if product.slug %}{% url 'product_detail' product.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="btn btn-secondary">
                         <i class="fas fa-times me-2"></i>Cancel
                     </a>
                 </div>

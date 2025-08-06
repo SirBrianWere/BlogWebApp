@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import os
 from django.conf import settings
+from django.utils.text import slugify
 # Create your models here.
 
 #Defines Structure of Data
@@ -10,6 +11,7 @@ from django.conf import settings
 #Blog Post Model
 class Product(models.Model):
     name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField()
     image = models.ImageField(upload_to='media/')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -40,23 +42,29 @@ class Product(models.Model):
             # If the description is already less than 50 words, return it as is
             return self.description
 
-    def save(self, *args, **kwargs) :
-        """Delete old image when updating to new one"""
-        try: 
-            #Get the existing Product instance from db
-            old_instance = Product.objects.get(pk = self.pk) if self.pk else None
-
-            #if instance exists and has an image that's different from new one
+    def save(self, *args, **kwargs):
+    # Delete old image if it's being replaced
+        try:
+            old_instance = Product.objects.get(pk=self.pk) if self.pk else None
             if old_instance and old_instance.image != self.image:
-                #Delete the old image file
                 old_image_path = os.path.join(settings.MEDIA_ROOT, old_instance.image.name)
-                if os.path.exists(old_image_path) :
+                if os.path.exists(old_image_path):
                     os.remove(old_image_path)
-        
         except Product.DoesNotExist:
-            pass #New instance being created
+            pass  # New instance, no image to delete
 
+        # Generate slug if not set
+        self.slug = slugify(self.name)
+            # Ensure slug is unique
+        original_slug = self.slug
+        counter = 1
+        while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+            self.slug = f"{original_slug}-{counter}"
+            counter += 1
+
+        # Save the model
         super().save(*args, **kwargs)
+
 
     def delete(self, *args, **kwargs) :
         """Delete the image file when product is deleted"""

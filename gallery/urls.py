@@ -9,9 +9,9 @@ urlpatterns = [
     path('', views.product_list, name='product_list'),
     path('register/', registration_view, name='register'),
     path('create/', views.create_product, name='create_product'), #CREATE
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('<slug:slug>/', login_required(views.product_detail), name='product_detail'), #READ
     path('<slug:slug>/edit/', views.edit_product, name='edit_product'), #EDIT/UPDATE
     path('<slug:slug>/delete/', views.delete_product, name='delete_product'), #DELETE
-    path('logout/', LogoutView.as_view(), name='logout'),
     path('like/<slug:slug>/', views.like_post, name='like_post'),
 ]

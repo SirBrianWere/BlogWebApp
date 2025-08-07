@@ -13,6 +13,8 @@
           
           <form method="POST" action="{% url 'register' %}">
             {% csrf_token %}
+
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
             
             <div class="mb-3">
               <label class="form-label fw-medium">Username</label>
@@ -57,7 +59,7 @@
             </ul>
             <div class="text-center pt-2">
               <span class="d-inline-block me-1">Have an account?</span>
-              <a href="{% url 'login' %}" class="fw-medium" style="color: burlywood;">Login</a>
+              <a href="{% url 'login' %}?next={{ request.path }}" class="fw-medium" style="color: burlywood;">Login</a>
             </div>
           </div>
         </div>

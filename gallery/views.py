@@ -25,18 +25,21 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
         return super().form_valid(form)
 
 #Sign Up View
+# In views.py
 def registration_view(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('product_list')
+            next_url = request.POST.get('next') or request.GET.get('next') or 'product_list'
+            return redirect(next_url)
     else:
         form = CustomUserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
-
-# Create your views here.
+    return render(request, 'registration/register.html', {
+        'form': form,
+        'next': request.GET.get('next', '')
+    })
 
 #Displays the products/Posts
 @login_required
@@ -49,6 +52,13 @@ def product_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     comments = product.comments.all().order_by('-date_posted')
+
+    # Get next and previous posts (ordered by creation date)
+    all_posts = list(Product.objects.order_by('-created_at'))
+    current_index = all_posts.index(product)
+    
+    previous_post = all_posts[current_index + 1] if current_index < len(all_posts) - 1 else None
+    next_post = all_posts[current_index - 1] if current_index > 0 else None
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -65,7 +75,9 @@ def product_detail(request, slug):
         'product': product,
         'comments': comments,
         'form': form,
-        })
+        'previous_post': previous_post,
+        'next_post': next_post,
+    })
 
 #Product/Post Creation #CREATE
 @login_required
@@ -115,8 +127,23 @@ def delete_product(request, slug):
 
 #Display Products/Posts on Home Page #READ
 def home(request):
-    products = Product.objects.all().order_by('-date_posted')
-    return render (request, 'gallery/index1.html',{'product': products})
+    product = Product.objects.all().order_by('-date_posted')
+    return render (request, 'gallery/index1.html',{'product': product})
+
+@login_required
+def discover_posts(request):
+    """Show only other users' posts"""
+    if request.user.is_authenticated:
+        products = Product.objects.exclude(author=request.user).order_by('-created_at')
+    else:
+        products = Product.objects.all().order_by('-created_at')
+    return render(request, 'gallery/discover.html', {'products': products})
+
+@login_required
+def my_blogs(request):
+    """Show only the logged-in user's posts"""
+    products = Product.objects.select_related('author').filter(author=request.user).order_by('-created_at')
+    return render(request, 'gallery/my_blogs.html', {'products': products})
 
 @login_required
 def like_post(request, slug):

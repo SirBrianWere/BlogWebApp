@@ -3,44 +3,63 @@
 {% block title %}Today's New Blogs{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold" style="color: #5a4a42;">Today's New Blogs</h1>
-    <div>
-      {% if user.is_authenticated %}
-        <a href="{% url 'create_product' %}" class="btn me-2 py-2 px-3" 
-           style="background-color: burlywood; color: white;">
-          Create New Blog Post
-        </a>
-         <form action="{% url 'logout' %}" method="post" class="d-inline">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline-secondary py-2 px-3">
-            Log Out
-          </button>
-        </form>
-      {% endif %}
+<!-- Navbar with tighter spacing -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #4a3c30; height: 56px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{% url 'product_list' %}" style="color: #f8f1e5;">BlogApp</a>
+    <div class="d-flex align-items-center">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 flex-row">
+        <li class="nav-item me-3">
+          <a class="nav-link active" href="{% url 'product_list' %}" style="color: #f8f1e5;">Home</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{% url 'discover' %}" style="color: #e2d5c0;">Discover</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{% url 'my_blogs' %}" style="color: #e2d5c0;">My Blogs</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        {% if user.is_authenticated %}
+          <a href="{% url 'create_product' %}" class="btn me-2 py-1 px-3" 
+             style="background-color: #c7a17a; color: white; border: none; transition: none;">
+            Create New
+          </a>
+          <form action="{% url 'logout' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light py-1 px-3" style="border-color: #e2d5c0;">
+              Log Out
+            </button>
+          </form>
+        {% endif %}
+      </div>
     </div>
   </div>
+</nav>
+
+<!-- Main Content with minimal top padding -->
+<div class="container" style="padding-top: 15px;">
+  <h1 class="fw-bold mb-4" style="color: #4a3c30;">Today's New Blogs</h1>
 
   <div class="row g-4">
     {% for product in products %}
     <div class="col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm" style="background-color: #f5e9dc;">
+      <div class="card h-100 border-0 shadow-sm" style="background-color: #f8f1e5;">
         <a href="{% url 'product_detail' product.slug %}">
           <img src="{{ product.image.url }}" alt="{{ product.name }}" 
                class="card-img-top" style="height: 200px; object-fit: cover;">
         </a>
         <div class="card-body">
-          <h5 class="card-title fw-bold mb-2" style="color: #5a4a42;">{{ product.name }}</h5>
+          <h5 class="card-title fw-bold mb-2" style="color: #4a3c30;">{{ product.name }}</h5>
           
           <div class="d-flex align-items-center mb-2">
             <small class="text-muted">
-              <i class="fas fa-user-circle me-1"></i>
+              <i class="fas fa-user-circle me-1" style="color: #c7a17a;"></i>
               @{{ product.author.username }}
             </small>
           </div>
           
-          <p class="card-text mb-3">{{ product.short_description }}</p>
+          <p class="card-text mb-3" style="color: #5a4a42;">{{ product.short_description }}</p>
           
           <div class="d-flex justify-content-between align-items-center">
             <div>
@@ -49,22 +68,21 @@
             </div>
           </div>
 
-          <!-- Like and Action Buttons Section -->
           <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
             <form method="POST" action="{% url 'like_post' product.slug %}" class="d-inline">
               {% csrf_token %}
               <button type="submit" class="btn btn-sm like-btn" style="background: none; border: none;">
-                <i class="far fa-heart me-1" style="color: #5a4a42; font-size: 1.1rem;"></i>
-                <span style="color: #5a4a42;">{{ product.likes.count }} Likes</span>
+                <i class="far fa-heart me-1" style="color: #4a3c30; font-size: 1.1rem;"></i>
+                <span style="color: #4a3c30;">{{ product.likes.count }} Likes</span>
               </button>
             </form>
             
             {% if user == product.author or user.is_superuser %}
               <div class="d-flex gap-2">
                 <a href="{% url 'edit_product' product.slug %}" class="text-decoration-none" 
-                   style="color: burlywood;">Edit</a>
+                   style="color: #c7a17a;">Edit</a>
                 <a href="{% url 'delete_product' product.slug %}" class="text-decoration-none" 
-                   style="color: #dc3545;">Delete</a>
+                   style="color: #b64545;">Delete</a>
               </div>
             {% endif %}
           </div>
@@ -81,18 +99,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Like button functionality
   document.querySelectorAll('.like-btn').forEach(button => {
     button.addEventListener('click', function() {
       const icon = this.querySelector('i');
       if (icon.classList.contains('far')) {
         icon.classList.remove('far');
         icon.classList.add('fas');
-        icon.style.color = '#dc3545';
+        icon.style.color = '#b64545';
       } else {
         icon.classList.remove('fas');
         icon.classList.add('far');
-        icon.style.color = '#5a4a42';
+        icon.style.color = '#4a3c30';
       }
     });
   });
@@ -100,26 +117,56 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-  .card {
-    transition: transform 0.3s ease;
+  /* Improved Color Palette */
+  :root {
+    --primary-dark: #4a3c30;
+    --primary-light: #f8f1e5;
+    --accent: #c7a17a;
+    --secondary: #e2d5c0;
+    --danger: #b64545;
   }
+  
+  body {
+    padding-top: 56px;
+    background-color: #f9f5f0;
+  }
+  
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+  
+  .nav-link {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .card {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+  }
+  
   .card:hover {
     transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
-  .card-img-top {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-  }
+  
   .like-btn:hover i {
     transform: scale(1.1);
-    transition: transform 0.2s ease;
   }
-  a[style*="color: burlywood"]:hover,
-  a[style*="color: #dc3545"]:hover {
-    text-decoration: underline !important;
+  
+  /* Log Out button hover effect */
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
-  .fa-user-circle {
-    color: burlywood;
+  
+  /* Remove all underlines */
+  a {
+    text-decoration: none !important;
+  }
+  
+  /* Remove hover effect from Create New button */
+  a[style*="background-color: #c7a17a"]:hover {
+    background-color: #c7a17a !important;
+    color: white !important;
   }
 </style>
 {% endblock %}

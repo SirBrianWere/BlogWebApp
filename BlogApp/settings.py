@@ -139,3 +139,4 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'# Redirect to blog home after logout
 
 USE_TZ = True
 TIME_ZONE = 'UTC'  # Or your preferred timezone
+

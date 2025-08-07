@@ -21,6 +21,8 @@
         <form method="POST" action="{% url 'login' %}" class="w-100" style="max-width: 320px;">
           {% csrf_token %}
           
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+
           <div class="mb-3 w-100">
             <label for="id_username" class="form-label">Username</label>
             <input type="text" name="username" class="form-control" id="id_username" required>

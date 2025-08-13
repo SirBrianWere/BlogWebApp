@@ -7,14 +7,17 @@ from gallery.views import CustomPasswordResetView, registration_view
 from django.views.generic.base import RedirectView
 from django.contrib.auth.views import LogoutView
 from gallery.token import password_reset_token
+from gallery.views import CustomLoginView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/accounts/login/', permanent=False)),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/login/', CustomLoginView.as_view(), name='login'),
     path('accounts/register/', registration_view, name='register'),
     path('accounts/logout/', LogoutView.as_view(http_method_names=['get', 'post']), name='logout'),
+
     #Password Reset URLS
     path('accounts/reset-password/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('accounts/reset-password/done/', 

@@ -45,7 +45,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
     # Delete old image if it's being replaced
         try:
-            old_instance = Product.objects.get(pk=self.pk) if self.pk else None
+            old_instance = Product.objects.get(slug=self.slug) if self.slug else None
             if old_instance and old_instance.image != self.image:
                 old_image_path = os.path.join(settings.MEDIA_ROOT, old_instance.image.name)
                 if os.path.exists(old_image_path):
@@ -88,4 +88,4 @@ class Comment(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Comment by {self.user.username} on "{self.post.name}"'
+        return f'Comment by {self.user.username} on "{self.product.name}"'

@@ -7,10 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth import views as auth_views
 from .token import password_reset_token
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth.views import LoginView
 
 #Authentication
 class CustomPasswordResetView(auth_views.PasswordResetView):
@@ -24,18 +24,29 @@ class CustomPasswordResetView(auth_views.PasswordResetView):
         print(f"Using token generator: {self.token_generator}")
         return super().form_valid(form)
 
+# LOGIN
+class CustomLoginView(LoginView):
+    def form_valid(self, form):
+        messages.success(self.request, f"Welcome back, {form.get_user().username}! You've successfully logged in.")
+        return super().form_valid(form)
+
 #Sign Up View
-# In views.py
 def registration_view(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
+
+            messages.success(request, "Your account has been created successfully.")
+        
+
             next_url = request.POST.get('next') or request.GET.get('next') or 'product_list'
             return redirect(next_url)
     else:
         form = CustomUserCreationForm()
+
+    
     return render(request, 'registration/register.html', {
         'form': form,
         'next': request.GET.get('next', '')
@@ -88,9 +99,12 @@ def create_product(request):
             product = form.save(commit=False)
             product.author = request.user  #Set the author to current user
             product.save()
+
+            messages.success(request, "Your post was created successfully!")
             return redirect('product_list')
     else:
         form = ProductForm()
+
     return render(request, 'gallery/create.html', {'form': form})
 
 #Editing Created Products/Posts #EDIT
@@ -106,9 +120,12 @@ def edit_product(request, slug):
         form = ProductForm(request.POST, request.FILES ,instance=product)
         if form.is_valid():
             form.save()
+
+            messages.success(request, "The post has been updated.")
             return redirect('product_list')
     else:
         form = ProductForm(instance=product)
+
     return render(request, 'gallery/edit.html', {'form': form})
 
 #Deleteing an existing Product/Post #DELETE
@@ -122,8 +139,12 @@ def delete_product(request, slug):
     
     if request.method == 'POST':
         product.delete()
+
+        messages.success(request, "The post has been deleted.")
         return redirect('product_list')
+    
     return render(request, 'gallery/delete.html', {'product': product})
+
 
 #Display Products/Posts on Home Page #READ
 def home(request):

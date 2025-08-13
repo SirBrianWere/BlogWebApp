@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,3 +141,11 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'# Redirect to blog home after logout
 USE_TZ = True
 TIME_ZONE = 'UTC'  # Or your preferred timezone
 
+#POP-UP MESSAGES
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger', 
+}
